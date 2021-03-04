@@ -18,6 +18,7 @@ class Bloop {
     // The bigger the bloop, the slower it is
     this.maxspeed = map(this.dna.genes[0], 0, 1, 15, 0);
     this.r = map(this.dna.genes[0], 0, 1, 0, 50);
+    this.attractions = [random(0, 1)] // trait(s) this agent is attracted to
   }
 
   run() {
@@ -41,8 +42,34 @@ class Bloop {
     }
   }
 
-  // At any moment there is a teeny, tiny chance a bloop will reproduce
-  reproduce() {
+  reproduce(bloops) {
+    // sexual reproduction
+    bloops.forEach(bloop => {
+      let distance = p5.Vector.dist(this.position, bloop.position)
+      let fuzz = 0.0005
+      let attracted = (a, b) => a < fuzz && b < fuzz ? true : false
+      // is there another bloop near?
+      if (distance > 0 && distance < this.r / 2) {
+        let me = this.attractions[0] - bloop.dna.genes[0]
+        let them = bloop.attractions[0] - this.dna.genes[0]
+        console.log(me, 'near ', them)
+        // are we attracted?
+        if (attracted(me, them)) {
+          let genes = this.dna.genes.concat(bloop.dna.genes)
+          console.log(me, 'attracted ', them , genes)
+          let childDNA = this.dna.crossover(genes)
+          childDNA.mutate(0.01)
+          console.log('Reproducing:', childDNA)
+          return new Bloop(this.position, childDNA)
+        }
+      }
+      else {
+        return null
+      }
+    })
+  }
+
+  a_reproduce() {
     // asexual reproduction
     if (random(1) < 0.0005) {
       // Child is exact copy of single parent
@@ -55,8 +82,7 @@ class Bloop {
     }
   }
 
-  // Method to update position
-  update() {
+  move() {
     // Simple movement based on perlin noise
     let vx = map(noise(this.xoff), 0, 1, -this.maxspeed, this.maxspeed);
     let vy = map(noise(this.yoff), 0, 1, -this.maxspeed, this.maxspeed);
@@ -65,6 +91,10 @@ class Bloop {
     this.yoff += 0.01;
 
     this.position.add(velocity);
+  }
+
+  update() {
+    this.move()
     // Death always looming
     this.health -= 0.2;
   }

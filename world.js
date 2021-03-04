@@ -44,7 +44,7 @@ class World {
         this.food.add(b.position);
       }
       // Perhaps this bloop would like to make a baby?
-      let child = b.reproduce();
+      let child = b.reproduce(this.bloops);
       if (child != null) this.bloops.push(child);
     }
   }

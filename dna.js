@@ -27,7 +27,12 @@ class DNA {
       newgenes[i] = this.genes[i];
     }
 
-    return new DNA(newgenes);
+    return new DNA(newgenes)
+  }
+
+  crossover(genes){
+    let choice = [genes[Math.floor(Math.random() * genes.length)]]
+    return new DNA(choice)
   }
 
   // Based on a mutation probability, picks a new random character in array spots
