@@ -43,9 +43,14 @@ class World {
         this.bloops.splice(i, 1);
         this.food.add(b.position);
       }
-      // Perhaps this bloop would like to make a baby?
-      let child = b.reproduce(this.bloops);
-      if (child != null) this.bloops.push(child);
+      // see if there are any nearby mates
+      let nearby = b.nearby(this.bloops)
+      if( nearby.length > 0 ){
+        let mate = b.select(nearby) 
+        let child = b.reproduce(mate)
+        if (child != null) this.bloops.push(child);
+
+      }
     }
   }
 }

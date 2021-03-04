@@ -42,31 +42,49 @@ class Bloop {
     }
   }
 
-  reproduce(bloops) {
-    // sexual reproduction
-    bloops.forEach(bloop => {
+  nearby(bloops) {
+    return bloops.filter(bloop => {
       let distance = p5.Vector.dist(this.position, bloop.position)
-      let fuzz = 0.0005
-      let attracted = (a, b) => a < fuzz && b < fuzz ? true : false
-      // is there another bloop near?
       if (distance > 0 && distance < this.r / 2) {
-        let me = this.attractions[0] - bloop.dna.genes[0]
-        let them = bloop.attractions[0] - this.dna.genes[0]
-        console.log(me, 'near ', them)
-        // are we attracted?
-        if (attracted(me, them)) {
-          let genes = this.dna.genes.concat(bloop.dna.genes)
-          console.log(me, 'attracted ', them , genes)
-          let childDNA = this.dna.crossover(genes)
-          childDNA.mutate(0.01)
-          console.log('Reproducing:', childDNA)
-          return new Bloop(this.position, childDNA)
-        }
+        return true
       }
-      else {
-        return null
-      }
+      else return false
     })
+  }
+
+  select(nearby) {
+    // select a mate
+    let fuzz = 0.4 // attractiveness threshold
+    let selection = nearby.filter(bloop => {
+      let me = Math.abs(this.attractions[0] - bloop.dna.genes[0])
+      let them = Math.abs(bloop.attractions[0] - this.dna.genes[0])
+      // console.log(me, them)
+      // ignore any nearby bloops that are not attractive...
+      let attracted = (a, b) => a > fuzz && b > fuzz ? true : false
+      if (attracted(me, them)) return true
+      else return false
+    })
+    let mate
+    // if there is more than one potential mate...
+    if (selection.length > 1) {
+      mate = Array.max(selection) // reproduce with the most attractive one
+    } else {
+      mate = selection[0]
+    }
+    console.log('Mate:', mate)
+    return mate
+  }
+
+  reproduce(mate) {
+    // local sexual reproduction
+    if (mate)  {
+      let genes = this.dna.genes.concat(mate.dna.genes)
+      let childDNA = this.dna.crossover(genes)
+      childDNA.mutate(0.01)
+      console.log('Reproducing:', childDNA)
+      return new Bloop(this.position, childDNA)
+    }
+    else return null
   }
 
   a_reproduce() {
@@ -76,7 +94,7 @@ class Bloop {
       let childDNA = this.dna.copy();
       // Child DNA can mutate
       childDNA.mutate(0.01);
-      return new Bloop(this.position, childDNA);
+      return new Bloop(this.position, childDNA)
     } else {
       return null;
     }

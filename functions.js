@@ -9,3 +9,7 @@ function loop(array, callback) {
         callback(i)
       }    
 }
+
+Array.max = function( array ){
+  return Math.max.apply( Math, array );
+};
