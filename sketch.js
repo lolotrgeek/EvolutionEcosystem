@@ -12,8 +12,11 @@
 
 let world;
 
+let w = window.innerWidth
+let h = window.innerHeight
+
 function setup() {
-  createCanvas(640, 360);
+  createCanvas(w, h);
   // World starts with 20 creatures
   // and 20 pieces of food
   world = new World(20);
