@@ -11,13 +11,14 @@ class Bloop {
   constructor(l, dna_) {
     this.position = l.copy() // Location
     this.health = 200 // Life timer
-    this.xoff = random(1000) // For perlin noise
+    this.xoff = random(1000)
     this.yoff = random(1000)
     this.dna = dna_ // DNA
     // DNA will determine size and maxspeed
     // The bigger the bloop, the slower it is
     this.maxspeed = map(this.dna.genes[0], 0, 1, 15, 0)
     this.r = map(this.dna.genes[0], 0, 1, 0, 50)
+    this.skin = this.r / 2
     this.attractions = [random(0, 1)] // trait(s) this agent is attracted to
   }
 
@@ -27,7 +28,6 @@ class Bloop {
     this.display()
   }
 
-  // A bloop can find food and eat it
   eat(f) {
     let food = f.getFood()
     // Are we touching any food objects?
@@ -45,7 +45,7 @@ class Bloop {
   nearby(bloops) {
     return bloops.filter(bloop => {
       let distance = p5.Vector.dist(this.position, bloop.position)
-      if (distance > 0 && distance < this.r / 2) {
+      if (distance > this.skin && distance < this.skin + 100) {
         return true
       }
       else return false
@@ -98,19 +98,23 @@ class Bloop {
     }
   }
 
-  move() {
-    // Simple movement based on perlin noise
+  brain() {
     let vx = map(noise(this.xoff), 0, 1, -this.maxspeed, this.maxspeed)
     let vy = map(noise(this.yoff), 0, 1, -this.maxspeed, this.maxspeed)
-    let velocity = createVector(vx, vy)
+    let coords = createVector(vx, vy)
     this.xoff += 0.01
     this.yoff += 0.01
+    return coords
+  }
 
-    this.position.add(velocity)
+  move(x,y){
+    this.position.x = position.x + x
+    this.position.y = position.y + y
   }
 
   update() {
-    this.move()
+    let movement = this.brain()
+    this.position.add(movement )
     // Death always looming
     this.health -= 0.2
   }
@@ -125,6 +129,7 @@ class Bloop {
 
   // Method to display
   display() {
+    //TODO: add color based on attraction
     ellipseMode(CENTER)
     stroke(0, this.health)
     fill(0, this.health)

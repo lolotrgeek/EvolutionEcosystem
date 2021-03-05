@@ -17,7 +17,7 @@ let h = window.innerHeight
 
 fuzz = 0.4 // attractiveness threshold
 odds = 0.01 // chances of reproduction
-population = 100
+population = 20
 
 function setup() {
   createCanvas(w, h)

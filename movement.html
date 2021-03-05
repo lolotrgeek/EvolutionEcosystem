@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/addons/p5.dom.min.js"></script>
+  <meta charset="utf-8" />
+  <title>Movement</title>
+  <style>
+    body {
+      margin: 0
+    }
+  </style>
+</head>
+
+<body>
+  <script>
+    let rad = 30 // Width of the shape
+    let xspeed = 0.8 // Speed of the shape
+    let yspeed = 0.2 // Speed of the shape
+    let maxspeed
+    let position
+    let pct = 0.0 // Percentage traveled (0.0 to 1.0)
+    let step = 0.01 // Size of each step toward objective
+    let distance
+    let begin
+    let last
+    let objective
+
+    function setup() {
+      createCanvas(720, 400)
+
+      frameRate(30)
+      ellipseMode(RADIUS)
+      // Set the starting position of the shape
+      position = createVector(random(width), random(height))
+      objective = createVector(random(width), random(height))
+      distance = createVector(objective.x - position.x, objective.y - position.y)
+      begin = position
+      last = position
+      maxspeed = map(.5, 0, 1, 15, 0)
+    }
+
+    function noisy_agent() {
+      // Generates x,y coord with velocity using Perlin noise
+      let vx = map(noise(xspeed), 0, 1, -maxspeed, maxspeed)
+      let vy = map(noise(yspeed), 0, 1, -maxspeed, maxspeed)
+      let coords = createVector(vx, vy)
+      // Change noise seed after generating coords
+      xspeed += 0.01
+      yspeed += 0.01
+      return coords
+    }
+
+    function move_relative(x, y) {
+      position.x = position.x + x
+      position.y = position.y + y
+    }
+
+    function draw() {
+      background(102)
+
+      let move = noisy_agent()
+      // console.log(vx,vy)
+      move_relative(move.x, move.y)
+
+      // Wraparround
+      if (position.x < -rad) position.x = width + rad
+      if (position.y < -rad) position.y = height + rad
+      if (position.x > width + rad) position.x = -rad
+      if (position.y > height + rad) position.y = -rad
+
+      // Draw shapes
+      fill(0)
+      line(position.x, position.y, objective.x, objective.y)
+      ellipse(position.x, position.y, rad, rad)
+      ellipse(objective.x, objective.y, 10, 10)
+
+      let d = int(dist(position.x, position.y, objective.x, objective.y))
+
+      // Draw distance
+      push()
+      translate((position.x + objective.x) / 2, (position.y + objective.y) / 2)
+      rotate(atan2(objective.y - position.y, objective.x - position.x))
+      fill('#fff')
+      text(nfc(d, 1), 0, -5)
+      pop()
+    }
+
+  </script>
+</body>
+
+</html>
