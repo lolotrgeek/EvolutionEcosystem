@@ -29,7 +29,7 @@ class Bloop {
 
   // A bloop can find food and eat it
   eat(f) {
-    let food = f.getFood();
+    let food = f.getFood()
     // Are we touching any food objects?
     for (let i = food.length - 1; i >= 0; i--) {
       let foodLocation = food[i]
@@ -54,11 +54,9 @@ class Bloop {
 
   select(nearby) {
     // select a mate
-    let fuzz = 0.4 // attractiveness threshold
     let selection = nearby.filter(bloop => {
       let me = Math.abs(this.attractions[0] - bloop.dna.genes[0])
       let them = Math.abs(bloop.attractions[0] - this.dna.genes[0])
-      // console.log(me, them)
       // ignore any nearby bloops that are not attractive...
       let attracted = (a, b) => a > fuzz && b > fuzz ? true : false
       if (attracted(me, them)) return true
@@ -71,17 +69,17 @@ class Bloop {
     } else {
       mate = selection[0]
     }
-    console.log('Mate:', mate)
     return mate
   }
 
   reproduce(mate) {
     // local sexual reproduction
-    if (mate)  {
+    if (mate && random(1) < odds) {
+      // console.log('Mate:', mate)
       let genes = this.dna.genes.concat(mate.dna.genes)
       let childDNA = this.dna.crossover(genes)
       childDNA.mutate(0.01)
-      console.log('Reproducing:', childDNA)
+      // console.log('Reproducing!', childDNA)
       return new Bloop(this.position, childDNA)
     }
     else return null

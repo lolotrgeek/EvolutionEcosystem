@@ -46,7 +46,7 @@ class World {
       // see if there are any nearby mates
       let nearby = b.nearby(this.bloops)
       if( nearby.length > 0 ){
-        let mate = b.select(nearby) 
+        let mate = b.select(nearby)
         let child = b.reproduce(mate)
         if (child != null) this.bloops.push(child)
 

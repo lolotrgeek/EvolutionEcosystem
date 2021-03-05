@@ -15,15 +15,23 @@ let world
 let w = window.innerWidth
 let h = window.innerHeight
 
+fuzz = 0.4 // attractiveness threshold
+odds = 0.01 // chances of reproduction
+population = 100
+
 function setup() {
   createCanvas(w, h)
+  textSize(20);
   // World starts with 20 creatures
   // and 20 pieces of food
-  world = new World(20)
+  world = new World(population)
 }
 
 function draw() {
   background(175)
+  text(`Fuzz ${fuzz}` , 10, 30)
+  text(`Odds ${odds}` , 10, 60)
+
   world.run()
 }
 

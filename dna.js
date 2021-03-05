@@ -4,7 +4,6 @@
 // Class to describe DNA
 // Has more features for two parent mating (not used in this example)
 
-
 // Constructor (makes a random DNA)
 class DNA {
   constructor(newgenes) {
@@ -13,6 +12,7 @@ class DNA {
     } else {
       // The genetic sequence
       // DNA is random floating point values between 0 and 1 (!!)
+      // DNA determines size and speed
       this.genes = new Array(1);
       for (let i = 0; i < this.genes.length; i++) {
         this.genes[i] = random(0, 1)
