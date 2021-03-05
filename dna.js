@@ -9,13 +9,13 @@
 class DNA {
   constructor(newgenes) {
     if (newgenes) {
-      this.genes = newgenes;
+      this.genes = newgenes
     } else {
       // The genetic sequence
       // DNA is random floating point values between 0 and 1 (!!)
       this.genes = new Array(1);
       for (let i = 0; i < this.genes.length; i++) {
-        this.genes[i] = random(0, 1);
+        this.genes[i] = random(0, 1)
       }
     }
   }
@@ -24,7 +24,7 @@ class DNA {
     // should switch to fancy JS array copy
     let newgenes = [];
     for (let i = 0; i < this.genes.length; i++) {
-      newgenes[i] = this.genes[i];
+      newgenes[i] = this.genes[i]
     }
 
     return new DNA(newgenes)
@@ -39,7 +39,7 @@ class DNA {
   mutate(m) {
     for (let i = 0; i < this.genes.length; i++) {
       if (random(1) < m) {
-        this.genes[i] = random(0, 1);
+        this.genes[i] = random(0, 1)
       }
     }
   }

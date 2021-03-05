@@ -11,5 +11,5 @@ function loop(array, callback) {
 }
 
 Array.max = function( array ){
-  return Math.max.apply( Math, array );
+  return Math.max.apply( Math, array )
 };
