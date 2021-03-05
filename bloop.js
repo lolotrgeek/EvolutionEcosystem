@@ -119,6 +119,13 @@ class Bloop {
     this.health -= 0.2
   }
 
+  phenotype() {
+    let r = 0
+    let g = 0
+    let b = Math.round(this.attractions[0] * 100) 
+    fill(r, g, b, this.health)
+  }
+
   // Wraparound
   borders() {
     if (this.position.x < -this.r) this.position.x = width + this.r
@@ -129,10 +136,10 @@ class Bloop {
 
   // Method to display
   display() {
-    //TODO: add color based on attraction
+
     ellipseMode(CENTER)
     stroke(0, this.health)
-    fill(0, this.health)
+    this.phenotype()
     ellipse(this.position.x, this.position.y, this.r, this.r)
   }
 
