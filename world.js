@@ -41,6 +41,22 @@ class World {
     pop()    
   }
 
+  wraparound(position, r) {
+    // cause bloops to wrap around the envrironment
+    if (position.x < -r) position.x = width + r
+    if (position.y < -r) position.y = height + r
+    if (position.x > width + r) position.x = -r
+    if (position.y > height + r) position.y = -r
+  }
+
+  display(bloop) {
+    ellipseMode(CENTER)
+    stroke(0, bloop.health)
+    let color = bloop.phenotype()
+    fill(color.r, color.g, color.b, bloop.health)
+    ellipse(bloop.position.x, bloop.position.y, bloop.radius, bloop.radius)
+  }
+
   // Run the world
   run() {
     // Deal with food
@@ -51,7 +67,11 @@ class World {
       // All bloops run and eat
       let b = this.bloops[i]
       // this.bloops.map(bloop => this.distance(b.position, bloop.position))
-      b.run()
+      b.spin()
+
+      this.wraparound(b.position, b.radius)
+      this.display(b)
+
       b.eat(this.food)
       if (b.dead()) {
         this.bloops.splice(i, 1)
