@@ -12,7 +12,7 @@ class World {
   constructor(num) {
     // Start with initial food and creatures
     this.food = new Food(num)
-    this.bloops = []; // An array for all creatures
+    this.bloops = [] 
     for (let i = 0; i < num; i++) {
       let l = createVector(random(width), random(height))
       let dna = new DNA()
@@ -53,7 +53,6 @@ class World {
       // this.bloops.map(bloop => this.distance(b.position, bloop.position))
       b.run()
       b.eat(this.food)
-      // If it's dead, kill it and make food
       if (b.dead()) {
         this.bloops.splice(i, 1)
         this.food.add(b.position)
