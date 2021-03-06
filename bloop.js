@@ -18,41 +18,46 @@ class Bloop {
     // The bigger the bloop, the slower it is
     this.maxspeed = map(this.dna.genes[0], 0, 1, 15, 0)
     this.radius = map(this.dna.genes[0], 0, 1, 0, 50)
+    this.observation_limit = this.radius * 3
     this.skin = this.radius / 2
     this.attractions = [random(0, 1)] // trait(s) this agent is attracted to
+    this.mate = null
+    this.ate = null
   }
 
   spin() {
     this.update()
   }
 
-  eat(f) {
-    let food = f.getFood()
-    // Are we touching any food objects?
-    for (let i = food.length - 1; i >= 0; i--) {
-      let foodLocation = food[i]
-      let d = p5.Vector.dist(this.position, foodLocation)
-      // If we are, juice up our strength!
-      if (d < this.radius / 2) {
-        this.health += 100
-        food.splice(i, 1)
-      }
+  observe(bloops, foods) {
+    if (bloops.length > 0) {
+      // try to mate with nearby bloops...
+      this.mate = this.select(bloops)
     }
+
+    if (foods.length > 0) {
+      // try to eat the foods...
+      this.eat(foods)
+    }
+
   }
 
-  nearby(bloops) {
-    return bloops.filter(bloop => {
-      let distance = p5.Vector.dist(this.position, bloop.position)
-      if (distance > this.skin && distance < this.skin + 100) {
-        return true
+  eat(foods) {
+    // consume food that we are touching
+    foods.forEachRev((food, i) => {
+      let distance = p5.Vector.dist(this.position, food)
+      if (distance < this.skin) {
+        this.health += 100
+        // TODO: not slicing because this is from the nearby array and not the global array, 
+        // need to pass to env somehow and slice from global food array
+        foods.splice(food, 1) 
       }
-      else return false
-    })
+    })    
   }
 
-  select(nearby) {
-    // select a mate
-    let selection = nearby.filter(bloop => {
+  select(bloops) {
+    // select a mate by attractiveness
+    let selection = bloops.filter(bloop => {
       let me = Math.abs(this.attractions[0] - bloop.dna.genes[0])
       let them = Math.abs(bloop.attractions[0] - this.dna.genes[0])
       // ignore any nearby bloops that are not attractive...

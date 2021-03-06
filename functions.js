@@ -1,15 +1,16 @@
-/**
- * 
- * @param {array} array 
- * @param {function} callback - args (index)
- */
-function loop(array, callback) {
-    // Cycle through the ArrayList backwards b/c we are deleting
-    for (let i = array.length - 1; i >= 0; i--) {
-        callback(i)
-      }    
-}
 
-Array.max = function( array ){
-  return Math.max.apply( Math, array )
+/**
+ * forEach in reverse to walk backward through an array
+ */
+Object.defineProperty(Array.prototype, 'forEachRev', {
+  value: function (callback) {
+    for (let i = this.length - 1; i >= 0; i--) {
+      element = this[i]
+      callback(element, i)
+    }
+  }
+})
+
+Array.max = function (array) {
+  return Math.max.apply(Math, array)
 };

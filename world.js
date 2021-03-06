@@ -12,7 +12,7 @@ class World {
   constructor(num) {
     // Start with initial food and creatures
     this.food = new Food(num)
-    this.bloops = [] 
+    this.bloops = []
     for (let i = 0; i < num; i++) {
       let l = createVector(random(width), random(height))
       let dna = new DNA()
@@ -27,18 +27,19 @@ class World {
     this.bloops.push(new Bloop(l, dna))
   }
 
-  distance(position, objective, attractions){
-    let d = int(dist(position.x, position.y, objective.x, objective.y))
-
+  showdistance(position, objective, attractions) {
     // Draw distance
     push()
     fill(0)
-    line(position.x, position.y, objective.x, objective.y)    
+    line(position.x, position.y, objective.x, objective.y)
     translate((position.x + objective.x) / 2, (position.y + objective.y) / 2)
     rotate(atan2(objective.y - position.y, objective.x - position.x))
-    fill('#fff')
-    text(nfc(attractions, 1), 0, -5)
-    pop()    
+
+    if (attractions > fuzz) {
+      fill('#fff')
+      text(nfc(attractions, 1), 0, -5)
+    }
+    pop()
   }
 
   wraparound(position, r) {
@@ -57,37 +58,62 @@ class World {
     ellipse(bloop.position.x, bloop.position.y, bloop.radius, bloop.radius)
   }
 
+
+  nearby(bloop, food) {
+    let bloops = this.bloops.filter(other => {
+      let distance = p5.Vector.dist(bloop.position, other.position)
+      if (distance > bloop.skin && distance < bloop.observation_limit) return true
+      else return false
+    })
+
+    let foods = food.filter(foodLocation => {
+      let distance = p5.Vector.dist(bloop.position, foodLocation)
+      if (distance < bloop.observation_limit) return true
+      else return false
+    })
+
+    return { foods, bloops }
+
+  }
   // Run the world
   run() {
     // Deal with food
     this.food.run()
 
     // Cycle through the ArrayList backwards b/c we are deleting
-    for (let i = this.bloops.length - 1; i >= 0; i--) {
-      // All bloops run and eat
-      let b = this.bloops[i]
-      // this.bloops.map(bloop => this.distance(b.position, bloop.position))
+    this.bloops.forEachRev((b, i) => {
+      // Run the bloop
       b.spin()
 
+      // Show the bloop.
       this.wraparound(b.position, b.radius)
       this.display(b)
 
-      b.eat(this.food)
+      // get the foods in the environment
+      let foods = this.food.getFood()
+
+      // see what is near each agent
+      let nearby = this.nearby(b, foods)
+
+      // pass the bloop an observation
+      b.observe(nearby.bloops, nearby.foods)
+
+      // show nearby bloops
+      nearby.bloops.map(near => {
+        this.showdistance(b.position, near.position, b.attractions)
+      })
+
       if (b.dead()) {
         this.bloops.splice(i, 1)
         this.food.add(b.position)
       }
-      // see if there are any nearby mates
-      let nearby = b.nearby(this.bloops)
-      if( nearby.length > 0 ){
-        nearby.map(near => {
-          this.distance(b.position, near.position, b.attractions)
-        })
-        let mate = b.select(nearby)
-        let child = b.reproduce(mate)
-        if (child != null) this.bloops.push(child)
 
+      // has bloop selected a mate?
+      if (b.mate != null) {
+        let child = b.reproduce(b.mate)
+        if (child != null) this.bloops.push(child)
+        b.mate = null // need to reset?
       }
-    }
+    })
   }
 }
