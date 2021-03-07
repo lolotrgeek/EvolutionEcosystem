@@ -45,12 +45,11 @@ class Bloop {
   eat(foods) {
     // consume food that we are touching
     foods.forEachRev((food, i) => {
-      let distance = p5.Vector.dist(this.position, food)
+      let foodLocation = food[1]
+      let distance = p5.Vector.dist(this.position, foodLocation)
       if (distance < this.skin) {
         this.health += 100
-        // TODO: not slicing because this is from the nearby array and not the global array, 
-        // need to pass to env somehow and slice from global food array
-        foods.splice(food, 1) 
+        this.ate = food[0]
       }
     })    
   }

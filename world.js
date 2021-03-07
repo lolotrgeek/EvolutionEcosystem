@@ -66,11 +66,21 @@ class World {
       else return false
     })
 
-    let foods = food.filter(foodLocation => {
+
+      // map the food values 
+      let foodmap = food.map((foodLocation, i) => {
+        return [i, foodLocation]
+      })
+
+    // filter out not nearby food
+    let foods = foodmap.filter(nearbyfood => {
+      let foodLocation = nearbyfood[1]
       let distance = p5.Vector.dist(bloop.position, foodLocation)
       if (distance < bloop.observation_limit) return true
       else return false
     })
+
+
 
     return { foods, bloops }
 
@@ -102,6 +112,11 @@ class World {
       nearby.bloops.map(near => {
         this.showdistance(b.position, near.position, b.attractions)
       })
+
+
+      if (b.ate != null) {
+        foods.splice(b.ate, 1)
+      }
 
       if (b.dead()) {
         this.bloops.splice(i, 1)
