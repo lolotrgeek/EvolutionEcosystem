@@ -67,10 +67,10 @@ class World {
     })
 
 
-      // map the food values 
-      let foodmap = food.map((foodLocation, i) => {
-        return [i, foodLocation]
-      })
+    // map the food values 
+    let foodmap = food.map((foodLocation, i) => {
+      return [i, foodLocation]
+    })
 
     // filter out not nearby food
     let foods = foodmap.filter(nearbyfood => {
@@ -83,8 +83,8 @@ class World {
 
 
     return { foods, bloops }
-
   }
+
   // Run the world
   run() {
     // Deal with food
@@ -117,17 +117,20 @@ class World {
         this.food.remove(b.ate)
       }
 
+      // has bloop selected a mate?
+      if (b.mate != null && random(1) < odds) {
+        let childDNA = b.reproduce(b.mate)
+        if (childDNA != null) {
+          childDNA.mutate(0.01)
+          let child = new Bloop(b.position, childDNA)
+          this.bloops.push(child)
+        }
+      }
       if (b.dead()) {
         this.bloops.splice(i, 1)
         this.food.add(b.position)
       }
-
-      // has bloop selected a mate?
-      if (b.mate != null) {
-        let child = b.reproduce(b.mate)
-        if (child != null) this.bloops.push(child)
-        b.mate = null // need to reset?
-      }
+      b.reset()
     })
   }
 }
