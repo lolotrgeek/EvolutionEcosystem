@@ -22,7 +22,7 @@ class Bloop {
     this.skin = this.radius / 2
     this.attractions = [random(0, 1)] // trait(s) this agent is attracted to
     this.mate = null
-    this.ate = null
+    this.ate = null // index of food eaten
   }
 
   spin() {
@@ -116,6 +116,8 @@ class Bloop {
 
   update() {
     let movement = this.brain()
+    this.ate = null
+    this.mate = null
     this.position.add(movement)
     // Death always looming
     this.health -= 0.2

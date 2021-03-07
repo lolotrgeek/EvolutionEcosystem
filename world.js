@@ -113,9 +113,8 @@ class World {
         this.showdistance(b.position, near.position, b.attractions)
       })
 
-
       if (b.ate != null) {
-        foods.splice(b.ate, 1)
+        this.food.remove(b.ate)
       }
 
       if (b.dead()) {

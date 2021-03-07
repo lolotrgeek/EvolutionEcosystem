@@ -20,6 +20,11 @@ class Food {
     this.food.push(l.copy())
   }
 
+  // Add some food at a location
+  remove(i) {
+    this.food.splice(i, 1)
+  }
+
   // Display the food
   run() {
     for (let i = 0; i < this.food.length; i++) {
