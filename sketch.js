@@ -12,16 +12,14 @@
 
 let world
 
-let w = window.innerWidth
-let h = window.innerHeight
-
 fuzz = 0.4 // attractiveness threshold
 odds = 0.01 // chances of reproduction
 population = 20
 
 function setup() {
-  createCanvas(w, h)
-  textSize(20);
+  cnv = createCanvas(windowWidth, windowHeight)
+  cnv.style('display', 'block')
+  textSize(20)
   // World starts with 20 creatures
   // and 20 pieces of food
   world = new World(population)
