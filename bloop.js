@@ -30,21 +30,27 @@ class Bloop {
     this.update()
   }
 
+  inside(thingLocation) {
+    let distance = p5.Vector.dist(this.position, thingLocation)
+    if (distance < this.skin) return true
+    else return false
+  }
+
   observe(bloops, foods) {
-    this.observations.push([{ bloops, foods }])
+    this.observations.push({ bloops, foods })
   }
 
   brain(observation) {
     if (observation.bloops && observation.bloops.length > 0) {
       // try to mate with nearby bloops...
-      this.mate = this.actions.select(bloops)
+      this.mate = this.actions.select(observation.bloops)
     }
     if (observation.foods && observation.foods.length > 0) {
       // EAT MODEL
       observation.foods.forEachRev(food => {
         let foodLocation = food[1]
         // try to eat the foods...
-        if (this.actions.inside(this, foodLocation)) {
+        if (this.inside(foodLocation)) {
           this.ate = this.actions.eat(food[0])
         }
       })
@@ -94,15 +100,10 @@ class Actions {
   constructor(creature) {
     this.creature = creature 
   }
+
   move(x, y) {
     this.creature.position.x = this.creature.position.x + x
     this.creature.position.y = this.creature.position.y + y
-  }
-
-  inside(thingLocation) {
-    let distance = p5.Vector.dist(this.creature.position, thingLocation)
-    if (distance < this.creature.skin) return true
-    else return false
   }
 
   eat(food) {
@@ -110,10 +111,10 @@ class Actions {
     return food
   }
 
-  select(others) {
+  select(nearby) {
     // select a mate by attractiveness
-    let potentials = others.filter(other => {
-      let attraction = Math.abs(this.creature.attractions[0] - other.dna.genes[0])
+    let potentials = nearby.filter(bloop => {
+      let attraction = Math.abs(this.creature.attractions[0] - bloop.dna.genes[0])
       // ignore any others that are not attractive...
       let attracted = a => a > fuzz ? true : false
       if (attracted(attraction)) return true
@@ -139,11 +140,9 @@ class Actions {
     // asexual reproduction
     if (random(1) < 0.0005) {
       // Child is exact copy of single parent
-      let childDNA = this.creature.dna.copy();
+      let childDNA = this.creature.dna.copy()
       // Child DNA can mutate
       return childDNA
-    } else {
-      return null;
-    }
+    } else return null
   }
 }

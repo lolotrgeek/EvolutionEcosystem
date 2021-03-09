@@ -79,10 +79,13 @@ class World {
       if (distance < bloop.observation_limit) return true
       else return false
     })
-
-
-
     return { foods, bloops }
+  }
+
+  inside(bloop, thingLocation) {
+    let distance = p5.Vector.dist(bloop.position, thingLocation)
+    if (distance < bloop.skin) return true
+    else return false
   }
 
   // Run the world
@@ -118,8 +121,8 @@ class World {
       }
 
       // has bloop selected a mate?
-      if (b.mate != null && random(1) < odds) {
-        let childDNA = b.reproduce(b.mate)
+      if (b.mate && random(1) < odds) {
+        let childDNA = b.actions.reproduce(b.mate)
         if (childDNA != null) {
           childDNA.mutate(0.01)
           let child = new Bloop(b.position, childDNA)
