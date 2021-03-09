@@ -65,13 +65,10 @@ class World {
       if (distance > bloop.skin && distance < bloop.observation_limit) return true
       else return false
     })
-
-
     // map the food values 
     let foodmap = food.map((foodLocation, i) => {
       return [i, foodLocation]
     })
-
     // filter out not nearby food
     let foods = foodmap.filter(nearbyfood => {
       let foodLocation = nearbyfood[1]
