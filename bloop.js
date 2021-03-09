@@ -4,9 +4,7 @@
 
 // Evolution EcoSystem
 
-
 // Creature class
-
 // Create a "bloop" creature
 class Bloop {
   constructor(l, dna_) {
@@ -77,7 +75,6 @@ class Bloop {
   reset() {
     this.ate = null
     this.mate = null
-    
   }
 
   phenotype() {
@@ -126,6 +123,10 @@ class Actions {
     // or just pick the only one... 
     else selection = potentials[0]
     return selection
+  }
+
+  give(nearby) {
+    // give energy to nearby
   }
 
   reproduce(mate) {
